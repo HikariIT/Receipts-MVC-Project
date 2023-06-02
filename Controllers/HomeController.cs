@@ -21,6 +21,11 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
+    /// <summary>
+    /// This method displays the Dashboard, where user can access groups they are part of or create a new one.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     [HttpGet]
     public IActionResult Dashboard(DashboardViewModel model) {
         
@@ -34,6 +39,11 @@ public class HomeController : Controller
         return View(model);
     }
 
+    /// <summary>
+    /// This method displays control panel for a specific group.
+    /// </summary>
+    /// <param name="id">Group ID</param>
+    /// <returns></returns>
     [HttpGet]
     public IActionResult Group(int id) {
         var token = HttpContext.Session.GetString("user");
@@ -94,6 +104,11 @@ public class HomeController : Controller
         return View(model);
     }
 
+    /// <summary>
+    /// This method displays a view for a specific receipt.
+    /// </summary>
+    /// <param name="id">Receipt ID</param>
+    /// <returns></returns>
     [HttpGet]
     public IActionResult Receipt(int id) {
         var token = HttpContext.Session.GetString("user");
@@ -130,6 +145,9 @@ public class HomeController : Controller
         return View(model);
     }
 
+    /// <summary>
+    /// This method displays a view for Admin panel, where the admin can manage users.
+    /// </summary>
     [HttpGet]
     public IActionResult Admin() {
         
