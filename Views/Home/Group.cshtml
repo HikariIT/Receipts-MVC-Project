@@ -1,0 +1,254 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model MVCProject.Models.Views.GroupViewModel;
+
+<div>
+    <div>
+        <h1>
+            @Model.Name
+        </h1>
+    </div>
+    <hr/>
+    <div class="space-container">
+        <div>
+            <h3>User list</h3>
+            @for (var i = 0; i < Model.Users.Count; i++) {
+                <div>
+                    @(i + 1). @Model.Users[i].username (@Model.Balances[Model.Users[i].user_id ?? -1].ToString("0.00"))
+                </div>
+            }
+        </div>
+        <button class="add-button" onclick="function showAddUserForm() {
+            document.getElementById('group-add-form-container').style.display = 'block';
+        }
+        showAddUserForm()"><h3>+</h3></button>
+    </div>
+    <hr/>
+    <div class="main-container">
+        <div class="receipt-container">
+            <div class="space-container">
+                <h3>Receipts</h3>
+                <button class="add-button" onclick="function showReceiptForm() {
+                    document.getElementById('receipt-add-form-container').style.display = 'block';
+                }
+                showReceiptForm()"><h3>+</h3></button>
+            </div>
+            <div>
+                @foreach(var receipt in Model.Receipts) {
+                    <div class="receipt-row">
+                        <div>
+                            <h6>
+                                <a href="/Home/Receipt/@receipt.receipt_id">@receipt.name</a>
+                            </h6>
+                            <div class="receipt-date">
+                                @receipt.date
+                            </div>
+                        </div>
+                        <div class="receipt-value">
+                            @receipt.value.ToString("0.00") (Paid by: @Model.Users.Find(u => u.user_id == receipt.paying_id).username)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="payment-container">
+            <div class="space-container">
+                <h3>Payments</h3>
+                <button class="add-button" onclick="function showPaymentAddForm() {
+                    document.getElementById('payment-add-form-container').style.display = 'block';
+                }
+                showPaymentAddForm()"><h3>+</h3></button>
+            </div>
+            <div>
+                @foreach(var payment in Model.Payments) {
+                    <div class="payment-row">
+                        <div>
+                            <h6>
+                                @Model.Users.Find(u => u.user_id == payment.user_id).username ->
+                                @if (payment.targeted) {
+                                    <span>@Model.Users.Find(u => u.user_id == payment.targeted_user_id).username</span>
+                                } else {
+                                    <span>Receipt</span>
+                                }
+                            </h6>
+                            <div>
+                                @payment.date
+                            </div>
+                        </div>
+                        <div class="payment-value">
+                            @payment.value.ToString("0.00")
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="group-add-form-container">
+        <div class="space-container">
+            <h2>Add user to group</h2>
+            <button class="add-button" onclick="function hideGroupAddForm() {
+                document.getElementById('group-add-form-container').style.display = 'none';
+            }
+            hideGroupAddForm()"><h3>×</h3></button>
+        </div>
+        @using (Html.BeginForm("AddToGroup", "Home", FormMethod.Post)) {
+            <div class="flex-row text-start">
+                <div class="form-label-container">
+                    <label for="name">Username</label>
+                </div>
+                <div class="form-field">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Username">
+                </div>
+                <input type="hidden" name="groupId" value="@Model.Id"/>
+            </div>
+            <div>
+                <input type="submit" value="Add user" class="btn btn-primary"/>
+            </div>
+        }
+    </div>
+    <div id="receipt-add-form-container">
+        <div class="space-container">
+            <h2>Add a new receipt</h2>
+            <button class="add-button" onclick="function hideReceiptAddForm() {
+                document.getElementById('receipt-add-form-container').style.display = 'none';
+            }
+            hideReceiptAddForm()"><h3>×</h3></button>
+        </div>
+        @using (Html.BeginForm("AddReceipt", "Home", FormMethod.Post)) {
+            <div class="flex-row text-start">    
+                <div>
+                    <div class="form-label-container">
+                        <label for="name">Receipt name</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="text" class="form-control" id="Name" name="name" placeholder="Receipt name">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-label-container">
+                        <label for="date">Receipt date</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="date" class="form-control" id="date" name="date" placeholder="Receipt date">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-label-container">
+                        <label for="value">Value</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="number" min="0" step="0.01" class="form-control" id="receipt-value" name="value" placeholder="Value">
+                    </div>
+                </div>
+                <div class="form-label-container">
+                    Needs of every user
+                </div>
+                <div class="form-field">
+                    @foreach(var user in Model.Users) {
+                        <div>
+                            <div class="need-row form-field">
+                                <div>@user.username</div>
+                                <div>
+                                    <input class="need-input" type="number" min="0" step="0.01" value="0" id="need_@user.user_id" 
+                                           name="need_@user.user_id" placeholder="Value">
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div>
+                        <div class="need-row form-field">
+                            <div>Shared</div>
+                            <div>
+                                <input type="number" min="0" step="0.01" id="shared" 
+                                       name="shared" placeholder="Value" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        var needs = document.getElementsByClassName("need-input");
+                        var shared = document.getElementById("shared");
+                        var receiptValue = document.getElementById("receipt-value");
+                    
+                        function updateShared() {
+                            var sum = 0;
+                            for (var i = 0; i < needs.length; i++) {
+                                sum += parseFloat(needs[i].value);
+                            }
+                            shared.value = (receiptValue.value - sum).toFixed(2);
+                        }
+                        
+                        for (var i = 0; i < needs.length; i++) {
+                            needs[i].addEventListener("change", updateShared);
+                        }
+                        
+                        receiptValue.addEventListener("change", updateShared);
+                    </script>
+                </div>
+                <div class="form-field">
+                    Payer 
+                    <select name="payer" id="payer">
+                        @foreach(var user in Model.Users) {
+                            <option value="@user.user_id">@user.username</option>
+                        }
+                    </select>
+                </div>
+                <input type="hidden" name="groupId" value="@Model.Id"/>
+                <input type="hidden" name="users" value="@string.Join(", ", Model.Users.Select(u => u.user_id))"/>
+            </div>
+            <div>
+                <input type="submit" value="Add Receipt" class="btn btn-primary"/>
+            </div>
+        }
+    </div>
+    <div id="payment-add-form-container">
+        <div class="space-container">
+            <h2>Add a new payment</h2>
+            <button class="add-button" onclick="function hidePaymentAddForm() {
+                document.getElementById('payment-add-form-container').style.display = 'none';
+            }
+            hidePaymentAddForm()"><h3>×</h3></button>
+        </div>
+        @using (Html.BeginForm("AddPayment", "Home", FormMethod.Post)) {
+            <div class="text-start">
+                <div>
+                    <div class="form-label-container">
+                        <label for="date">Payment date</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="date" class="form-control" id="date" name="date" placeholder="Receipt date">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-label-container">
+                        <label for="value">Value</label>
+                    </div>
+                    <div class="form-field">
+                        <input type="number" min="0" step="0.01" class="form-control" id="value" name="value" placeholder="Value">
+                    </div>
+                </div>
+                <div class="form-field">
+                    Payer 
+                    <select name="payer" id="payer">
+                        @foreach(var user in Model.Users) {
+                            <option value="@user.user_id">@user.username</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-field">
+                    Target
+                    <select name="target" id="target">
+                        @foreach(var user in Model.Users) {
+                            <option value="@user.user_id">@user.username</option>
+                        }
+                    </select>
+                </div>
+                <input type="hidden" name="groupId" value="@Model.Id"/>
+            </div>
+            <div>
+                <input type="submit" value="Add payment" class="btn btn-primary"/>
+            </div>
+        }
+    </div>
+</div>

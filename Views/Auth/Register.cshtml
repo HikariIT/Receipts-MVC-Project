@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model MVCProject.Models.User
+
+<div class="text-center">
+    <div>
+        @using (Html.BeginForm("RegisterForm", "Auth", FormMethod.Post)) {
+            <fieldset>
+                <legend>REGISTER</legend>
+                
+                <div class="form-label-container">@Html.LabelFor(model => model.Username)</div>
+                <div class="form-field">
+                    @Html.TextBoxFor(model => model.Username)
+                </div>
+
+                <div class="form-label-container">@Html.LabelFor(model => model.Mail)</div>
+                <div class="form-field">
+                    @Html.TextBoxFor(model => model.Mail, new { type = "email" })
+                </div>
+                
+                <div class="form-label-container"> @Html.LabelFor(model => model.Password)</div>
+                <div class="form-field">
+                    @Html.PasswordFor(model => model.Password)
+                </div>
+                
+                <input type="submit" value="Register" class="btn btn-primary"/>
+            </fieldset>
+        }
+        <div>
+            Already Registered? 
+            <a href="/auth/login">Log in!</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model MVCProject.Models.User
+
+<div class="text-center">
+    <div class="group-creation-form">
+        @using (Html.BeginForm("LoginForm", "Auth", FormMethod.Post)) {
+            <fieldset>
+                <legend>LOG IN</legend>
+                <div class="form-label-container">@Html.LabelFor(model => model.Mail, new { type = "email" })</div>
+                <div class="form-field">
+                    @Html.TextBoxFor(model => model.Mail)
+                </div>
+
+                <div class="form-label-container"> @Html.LabelFor(model => model.Password)</div>
+                <div class="form-field">
+                    @Html.PasswordFor(model => model.Password)
+                </div>
+
+                <input type="submit" value="Log in" class="btn btn-primary"/>
+            </fieldset>
+        }
+        <div>
+            <a href="/auth/register">Register</a>
+        </div>
+    </div>
+</div>

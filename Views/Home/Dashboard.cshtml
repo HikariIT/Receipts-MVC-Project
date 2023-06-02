@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using MVCProject.Database.Models
+@model MVCProject.Models.Views.DashboardViewModel;
+    
+<div class="text-center">
+    <h1>
+        DASHBOARD
+    </h1>
+    <div>
+        Groups you are participating in are visible here.
+    </div>
+    @foreach (var group in Model.Groups) {
+        <div class="group-container">
+            <h2>
+                @group.name
+            </h2>
+            <h2>
+                <a href=@("Group/" + group.group_id)> > </a>
+            </h2>
+        </div>
+    }
+    <div class="group-creation-form">
+        <h3>Create a new group</h3>
+        @using (Html.BeginForm("CreateGroup", "Home", FormMethod.Post)) {
+            <div class="flex-row text-start">    
+                <div class="form-label-container">
+                    <label for="name">Group name</label>
+                </div>
+                <div class="form-field">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Group name">
+                </div>
+            </div>
+            <div>
+                <input type="submit" value="Create group" class="btn btn-primary"/>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@using MVCProject.Models.Views
+@model ReceiptViewModel;
+
+<div>
+    <div class="space-container">
+        <div>
+            <h1>
+                @Model.Name
+            </h1>
+            ID: @Model.Id, Group: @Model.GroupName
+        </div>
+        <div>
+            Date: @Model.Date
+        </div>
+    </div>
+    <hr/>
+    <div>
+        <h3>Total item values of every user in this receipt:</h3>
+        @foreach (var need in Model.Needs) {
+            <div>
+                @Model.Users.Find(u => u.user_id == need.user_id).username: @need.value.ToString("0.00")
+            </div>
+        }
+    </div>
+    <hr/>
+    <div>
+        <b>Total value:</b> @Model.Value.ToString("0.00")
+    </div>
+</div>

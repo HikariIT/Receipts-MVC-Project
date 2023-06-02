@@ -1,0 +1,30 @@
+﻿.group-container {
+    padding: 20px;
+    margin: 20px;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 20px;
+    background-color: #dddddd;
+}
+
+.group-creation-form {
+    padding: 20px;
+    margin: 20px;
+    border-radius: 20px;
+    background-color: #dddddd;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-field {
+    margin: 10px;
+}
+
+.form-label-container {
+    margin: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
